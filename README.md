@@ -8,13 +8,13 @@ This program takes a text vector graphic (*.tvg*) file that specifies the canvas
 ### Build and Run
 This script was created with Python 3.7 (and should run on Python 3.6 or higher to allow for formatting of string literals e.g. `print(f'hello {var}')`). To build and run the script:
 
-  * Clone the program: 
+  * Clone the program:  
     `git clone git@github.com:mkduer/asciilines.git`.  
 
-  * Go into the `asciilines` directory: 
+  * Go into the `asciilines` directory:  
     `cd asciilines`  
 
-  * Make sure the permissions on the python script are correct: 
+  * Make sure the permissions on the python script are correct:  
     `chmod 755 asciilines.py`  
 
   * Run the script with one of the provided .tvg test files in the `tests` directory:  
