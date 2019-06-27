@@ -3,18 +3,14 @@
 import sys
 
 
-def define_specs(filename: str) -> ((int, int), [str]):
+def define_specs(file: str) -> ((int, int), [str]):
     """
     read the file and grab the canvas dimensions and ascii commands
-    :param filename: the filename that contains the canvas specifications
+    :param: file: the file that contains the canvas specifications
     :return dimensions, ascii_commands: tuple of tuple canvas dimensions (integer width x integer height) 
                                         and a list of string ascii commands
     """
-    width, height = 0, 0
-    ascii_commands = []
-    canvas_dim = ""
-
-    with open(filename, 'r') as file:
+    with open(file, 'r') as file:
         ascii_commands = file.read().splitlines()
         canvas_dim = ascii_commands.pop(0).split(' ')
 
@@ -23,11 +19,12 @@ def define_specs(filename: str) -> ((int, int), [str]):
 
     return (height, width), ascii_commands
 
+
 def init_canvas(dimensions: (int, int)) -> [[str]]:
     """ 
     initialize a canvas 
-    :param width: width of canvas
-    :param height: height of canvas
+    :param: width: width of canvas
+    :param: height: height of canvas
     """
     canvas = []
     height = dimensions[0]
@@ -45,46 +42,78 @@ def init_canvas(dimensions: (int, int)) -> [[str]]:
 def print_ascii_canvas(canvas: [[str]]):
     """
     print ascii canvas
-    :param canvas: list of each row in the canvas
+    :param: canvas: list of each row in the canvas
     """
     for row in canvas:
         print("".join(row))
 
 
-def draw_ascii_lines(canvas: [[str]], cmd: str) -> [[str]]:
+def draw_ascii_lines(canvas: [[str]], dimensions: (int, int), cmd: [str]) -> [[str]]:
     """
     runs the command to draw ascii lines on the canvas
-    :param canvas: list of each row in the canvas
-    :param cmd: ascii command for drawing line
+    :param: canvas: list of each row in the canvas
+    :param: cmd: ascii command for drawing line
     """
     symbol, direction = cmd[0], cmd[3]
-    row = ord(cmd[1]) - 48
-    col = ord(cmd[2]) - 48
     length = ord(cmd[4]) - 48
+    row_neg = False
+    col_neg = False
 
-    start_coordinates = (row, col)
+    if len(cmd[1]) > 1:
+        row_neg = True
+        row = (ord(cmd[1][1]) - 48) * -1
+    else:
+        row = ord(cmd[1]) - 48
 
-    # TODO: need to handle negative values for coordinates
+    if len(cmd[2]) > 1:
+        col_neg = True
+        col = (ord(cmd[2][1]) - 48) * -1
+    else:
+        col = ord(cmd[2]) - 48
 
     if direction == "v":
-        end_coordinates = (row + length, col)
-        for point in range(length):
-            canvas[row + point][col] = symbol
+        # handle negative coordinates
+        if col_neg:
+            return canvas
+        if row_neg:
+            while row < 0:
+                row += 1
+                length -= 1
+
+        # draw the ascii line
+        if length > 0:
+            for point in range(length):
+                # draw within canvas dimensions
+                if row + point > dimensions[0] - 1:
+                    break
+                canvas[row + point][col] = symbol
     else:
-        end_coordinates = (row, col + length)
-        for point in range(length):
-            canvas[row][col + point] = symbol
+        # handle negative coordinates
+        if row_neg:
+            return canvas
+        if col_neg:
+            while col < 0:
+                col += 1
+                length -= 1
+
+        # draw the ascii line
+        if length > 0:
+            for point in range(length):
+                # draw within canvas dimensions
+                if col + point > dimensions[1] - 1:
+                    break
+                canvas[row][col + point] = symbol
 
     return canvas
 
 
-def canvas_test(filename: str, canvas: [[str]]) -> bool:
+def grab_test_canvas(file: str) -> str:
     """
     compares canvas with expected result
-    :param canvas: list of each row in the canvas
-    :param filename: the filename that contains the canvas specifications
+    :param: canvas: list of each row in the canvas
+    :param: file: the file that contains the canvas specifications
     """
-    testfile = filename[:-3] + 'out'
+    testfile = file[:-3] + 'out'
 
     with open(testfile, 'r') as file:
         test_canvas = file.read().splitlines()
@@ -92,31 +121,30 @@ def canvas_test(filename: str, canvas: [[str]]) -> bool:
     test_canvas = ["".join(row) for row in test_canvas]
     test_canvas = "\n".join(test_canvas)
 
-    print(f'test canvas: \n{test_canvas}')  # TODO: delete test print
+    return test_canvas
+
+
+def main(file: str):
+    """ 
+    main function that processes the specifications in the given file
+    and uses the specs to print an ascii canvas 
+    :param: file: the file that contains the canvas specifications
+    """
+    dimensions, ascii_commands = define_specs(file)
+    canvas = init_canvas(dimensions)
+
+    for cmd in ascii_commands:
+        canvas = draw_ascii_lines(canvas, dimensions, cmd.split(" "))
+
+    test_canvas = grab_test_canvas(file)
 
     canvas = ["".join(row) for row in canvas]
     canvas = "\n".join(canvas)
 
-    print(f'canvas: \n{canvas}')  # TODO: delete test print
-    return canvas == test_canvas
-
-
-def main(filename: str):
-    """ 
-    main function that processes the specifications in the given file
-    and uses the specs to print an ascii canvas 
-    :param filename: the filename that contains the canvas specifications
-    """
-    dimensions, ascii_commands = define_specs(filename)
-    canvas = init_canvas(dimensions)
-
-    for cmd in ascii_commands:
-        canvas = draw_ascii_lines(canvas, cmd.split(" "))
-
-    if not canvas_test(filename, canvas):
+    if canvas != test_canvas:
         raise ValueError("the canvas does not contain the correct ascii values")
 
-    print_ascii_canvas(canvas)
+    print(f'{canvas}')
 
 
 def parse_args():
@@ -126,11 +154,11 @@ def parse_args():
     if 2 < total_args or total_args < 2:
         raise TypeError("incorrect number of arguments. EXAMPLE of correct usage: `./asciilines.py filename.tvg")
 
-    filename = sys.argv[1]
-    if ".tvg" not in filename:
+    file = sys.argv[1]
+    if ".tvg" not in file:
         raise TypeError("WARNING: invalid file type. Expecting a .tvg file")
 
-    return filename
+    return file
 
 
 if __name__ == '__main__':
