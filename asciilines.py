@@ -30,7 +30,7 @@ def init_canvas(dimensions: (int, int)) -> [[str]]:
     height = dimensions[0]
     width = dimensions[1]
 
-    if width == 0 or height == 0:
+    if width < 1 or height < 1:
         raise ValueError("invalid dimensions for canvas")
 
     for i in range(height):

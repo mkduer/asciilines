@@ -23,10 +23,23 @@ This script was created with Python 3.7 (and should run on Python 3.6 or higher 
 
 ### Testing, Bugs, Defects, etc.
 
-This program will raise an TypeErrors if incorrect files or arguments are passed in. It will also raise a ValueError if a dimension less than zero is in the .tvg file.
+Most of the error handling in this short program are dealt with by raising exceptions, as this seemed reasonable for the goals/expectations for this assignment.
 
-[ ] Information about bugs, defects, failing tests, etc  
+##### ***file error handling***
 
+TypeErrors are reaised if incorrect files or arguments are passed in. A ValueError is raised if a dimension less than zero is in the .tvg file. These checks are made in the `parse_args` function.
+
+##### ***canvas parameters***
+
+A ValueError is thrown in `init_canvas` if a dimension less than 1 is given by the .tvg file (as a canvas must at least consist of one row or one column).
+
+##### ***canvas test***
+
+Finally, a ValueError is raised in `main` if the resulting canvas does not match the expected canvas (example: from *test1.out*).
+
+##### ***final notes***
+
+Due to the small scope of this problem, I decided against running `pytest` or unit tests, and stuck with exception raising.. Additional tests that could be made would be checks for valid symbol processing, making limits on the canvas dimensions if desired, etc.
 
 
 #### License
