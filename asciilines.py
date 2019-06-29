@@ -30,7 +30,7 @@ def init_canvas(dimensions: (int, int)) -> [[str]]:
     height = dimensions[0]
     width = dimensions[1]
 
-    if width < 1 or height < 1:
+    if width < 1 or width > 9 or height < 1 or height > 9:
         raise ValueError("invalid dimensions for canvas")
 
     for i in range(height):
@@ -142,7 +142,7 @@ def main(file: str):
     canvas = "\n".join(canvas)
 
     if canvas != test_canvas:
-        raise ValueError("the canvas does not contain the correct ascii values")
+        raise ValueError("the created canvas does not match the expected output")
 
     print(f'{canvas}')
 

@@ -27,7 +27,7 @@ Most of the error handling in this short program are dealt with by raising excep
 
 ##### ***file error handling***
 
-TypeErrors are reaised if incorrect files or arguments are passed in. A ValueError is raised if a dimension less than zero is in the .tvg file. These checks are made in the `parse_args` function.
+TypeErrors are raised if incorrect files or arguments are passed in. A ValueError is raised if a dimension less than zero is in the .tvg file. These checks are made in the `parse_args` function.
 
 ##### ***canvas parameters***
 
@@ -37,9 +37,15 @@ A ValueError is thrown in `init_canvas` if a dimension less than 1 is given by t
 
 Finally, a ValueError is raised in `main` if the resulting canvas does not match the expected canvas (example: from *test1.out*).
 
-##### ***final notes***
+##### ***final notes*** and potential bugs
 
-Due to the small scope of this problem, I decided against running `pytest` or unit tests, and stuck with exception raising.. Additional tests that could be made would be checks for valid symbol processing, making limits on the canvas dimensions if desired, etc.
+Due to the small scope of this problem, I decided against running `pytest` or unit tests, and stuck with raising exceptions.
+
+Currently, only digits [0,9] will be accepted as canvas and length values. Only values [-9, 9] will be accepted for coordinates. Values out of range will result in the program failing. If I were spending more time on this program, I would have allowed for values outside of the ranges and created tests for these cases.
+
+The program will also fail if the .tvg file contains more than two lines of ascii line commands. It would be interesting to modify the program to create many more lines (and perhaps even diagonals).
+
+
 
 
 #### License
