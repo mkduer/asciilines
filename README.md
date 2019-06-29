@@ -37,7 +37,7 @@ A ValueError is thrown in `init_canvas` if a dimension less than 1 is given by t
 
 Finally, a ValueError is raised in `main` if the resulting canvas does not match the expected canvas (example: from *test1.out*).
 
-##### ***final notes*** and potential bugs
+##### ***final notes and potential bugs***
 
 Due to the small scope of this problem, I decided against running `pytest` or unit tests, and stuck with raising exceptions.
 
